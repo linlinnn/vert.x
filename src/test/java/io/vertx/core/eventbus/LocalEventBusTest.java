@@ -133,14 +133,16 @@ public class LocalEventBusTest extends EventBusTestBase {
     vertx.deployVerticle(new AbstractVerticle() {
       MessageConsumer consumer;
       @Override
-      public void start() throws Exception {
+      public void start() {
         context.exceptionHandler(err -> {
           fail("Unexpected exception");
         });
         consumer = eb.<String>consumer(ADDRESS1).handler(msg -> {});
       }
     }, onSuccess(deploymentID -> {
+      System.out.println(vertx.getOrCreateContext());
       vertx.undeploy(deploymentID, onSuccess(v -> {
+        System.out.println(vertx.getOrCreateContext());
         vertx.setTimer(10, id -> {
           testComplete();
         });
