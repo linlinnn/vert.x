@@ -14,7 +14,7 @@ package io.vertx.core.impl.future;
 import io.netty.util.concurrent.Future;
 import io.vertx.core.impl.ContextInternal;
 
-public class PromiseImpl<T> extends FutureImpl<T> implements PromiseInternal<T> {
+public class PromiseImpl<T> extends FutureImpl<T> implements PromiseInternal<T>, Listener<T> {
 
   /**
    * Create a promise that hasn't completed yet
@@ -28,6 +28,16 @@ public class PromiseImpl<T> extends FutureImpl<T> implements PromiseInternal<T> 
    */
   public PromiseImpl(ContextInternal context) {
     super(context);
+  }
+
+  @Override
+  public void onSuccess(T value) {
+    tryComplete(value);
+  }
+
+  @Override
+  public void onFailure(Throwable failure) {
+    tryFail(failure);
   }
 
   @Override

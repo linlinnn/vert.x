@@ -128,24 +128,30 @@ class FutureImpl<T> implements FutureInternal<T> {
   @Override
   public Future<T> onComplete(Handler<AsyncResult<T>> handler) {
     Objects.requireNonNull(handler, "No null handler accepted");
-    addListener(new Listener<T>() {
-      @Override
-      public void onSuccess(T value) {
-        if (context != null) {
-          context.emit(FutureImpl.this, handler);
-        } else {
-          handler.handle(FutureImpl.this);
+    Listener<T> listener;
+    if (handler instanceof Listener) {
+      listener = (Listener<T>) handler;
+    } else {
+      listener = new Listener<T>() {
+        @Override
+        public void onSuccess(T value) {
+          if (context != null) {
+            context.emit(FutureImpl.this, handler);
+          } else {
+            handler.handle(FutureImpl.this);
+          }
         }
-      }
-      @Override
-      public void onFailure(Throwable failure) {
-        if (context != null) {
-          context.emit(FutureImpl.this, handler);
-        } else {
-          handler.handle(FutureImpl.this);
+        @Override
+        public void onFailure(Throwable failure) {
+          if (context != null) {
+            context.emit(FutureImpl.this, handler);
+          } else {
+            handler.handle(FutureImpl.this);
+          }
         }
-      }
-    });
+      };
+    }
+    addListener(listener);
     return this;
   }
 

@@ -1502,6 +1502,18 @@ public class FutureTest extends VertxTestBase {
   }
 
   @Test
+  public void testPromiseUsedAsHandler() {
+    Promise<Void> promise1 = Promise.promise();
+    Promise<Void> promise2 = Promise.promise();
+    promise1.future().onComplete(promise2);
+    promise2.future().onComplete(onSuccess(v -> {
+      testComplete();
+    }));
+    promise1.complete();
+    await();
+  }
+
+  @Test
   public void testToCompletionStageTrampolining() {
     waitFor(2);
     Thread mainThread = Thread.currentThread();
