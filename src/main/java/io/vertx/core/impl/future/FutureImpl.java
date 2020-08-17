@@ -223,7 +223,7 @@ class FutureImpl<T> implements FutureInternal<T> {
         return "Future{cause=" + ((Throwable)value).getMessage() + "}";
       }
       if (value != null) {
-        return "Future{result=" + value + "}";
+        return "Future{result=" + (value == NULL_VALUE ? "null" : value) + "}";
       }
       return "Future{unresolved}";
     }

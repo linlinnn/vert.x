@@ -11,9 +11,14 @@
 
 package io.vertx.core.impl.future;
 
-import io.netty.util.concurrent.Future;
+import io.vertx.core.Future;
 import io.vertx.core.impl.ContextInternal;
 
+/**
+ * Promise implementation.
+ *
+ * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ */
 public class PromiseImpl<T> extends FutureImpl<T> implements PromiseInternal<T>, Listener<T> {
 
   /**
@@ -41,16 +46,16 @@ public class PromiseImpl<T> extends FutureImpl<T> implements PromiseInternal<T>,
   }
 
   @Override
-  public void operationComplete(Future<T> future) throws Exception {
+  public Future<T> future() {
+    return this;
+  }
+
+  @Override
+  public void operationComplete(io.netty.util.concurrent.Future<T> future) {
     if (future.isSuccess()) {
       complete(future.getNow());
     } else {
       fail(future.cause());
     }
-  }
-
-  @Override
-  public io.vertx.core.Future<T> future() {
-    return this;
   }
 }
