@@ -84,6 +84,21 @@ public class FailedFuture<T> implements FutureInternal<T> {
   }
 
   @Override
+  public Future<T> onSuccess(Handler<T> handler) {
+    return this;
+  }
+
+  @Override
+  public Future<T> onFailure(Handler<Throwable> handler) {
+    if (context != null) {
+      context.emit(cause, handler);
+    } else {
+      handler.handle(cause);
+    }
+    return this;
+  }
+
+  @Override
   public void addListener(Listener<T> listener) {
     listener.onFailure(cause);
   }

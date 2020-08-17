@@ -63,6 +63,21 @@ public class SucceededFuture<T> implements FutureInternal<T> {
   }
 
   @Override
+  public Future<T> onSuccess(Handler<T> handler) {
+    if (context != null) {
+      context.emit(result, handler);
+    } else {
+      handler.handle(result);
+    }
+    return this;
+  }
+
+  @Override
+  public Future<T> onFailure(Handler<Throwable> handler) {
+    return this;
+  }
+
+  @Override
   public Future<T> onComplete(Handler<AsyncResult<T>> handler) {
     if (context != null) {
       context.emit(this, handler);

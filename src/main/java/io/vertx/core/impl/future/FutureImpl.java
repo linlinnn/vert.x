@@ -88,23 +88,61 @@ class FutureImpl<T> implements FutureInternal<T> {
   }
 
   @Override
-  public Future<T> onComplete(Handler<AsyncResult<T>> h) {
-    Objects.requireNonNull(h, "No null handler accepted");
+  public Future<T> onSuccess(Handler<T> handler) {
+    Objects.requireNonNull(handler, "No null handler accepted");
     addListener(new Listener<T>() {
       @Override
       public void onSuccess(T value) {
         if (context != null) {
-          context.emit(FutureImpl.this, h);
+          context.emit(value, handler);
         } else {
-          h.handle(FutureImpl.this);
+          handler.handle(value);
+        }
+      }
+      @Override
+      public void onFailure(Throwable failure) {
+      }
+    });
+    return this;
+  }
+
+  @Override
+  public Future<T> onFailure(Handler<Throwable> handler) {
+    Objects.requireNonNull(handler, "No null handler accepted");
+    addListener(new Listener<T>() {
+      @Override
+      public void onSuccess(T value) {
+      }
+      @Override
+      public void onFailure(Throwable failure) {
+        if (context != null) {
+          context.emit(failure, handler);
+        } else {
+          handler.handle(failure);
+        }
+      }
+    });
+    return this;
+  }
+
+  @Override
+  public Future<T> onComplete(Handler<AsyncResult<T>> handler) {
+    Objects.requireNonNull(handler, "No null handler accepted");
+    addListener(new Listener<T>() {
+      @Override
+      public void onSuccess(T value) {
+        if (context != null) {
+          context.emit(FutureImpl.this, handler);
+        } else {
+          handler.handle(FutureImpl.this);
         }
       }
       @Override
       public void onFailure(Throwable failure) {
         if (context != null) {
-          context.emit(FutureImpl.this, h);
+          context.emit(FutureImpl.this, handler);
         } else {
-          h.handle(FutureImpl.this);
+          handler.handle(FutureImpl.this);
         }
       }
     });

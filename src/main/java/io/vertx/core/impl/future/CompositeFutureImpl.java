@@ -176,7 +176,17 @@ public class CompositeFutureImpl extends FutureImpl<CompositeFuture> implements 
   }
 
   @Override
-  public CompositeFuture onComplete(Handler<AsyncResult<CompositeFuture>> h) {
-    return (CompositeFuture)super.onComplete(h);
+  public CompositeFuture onComplete(Handler<AsyncResult<CompositeFuture>> handler) {
+    return (CompositeFuture)super.onComplete(handler);
+  }
+
+  @Override
+  public CompositeFuture onSuccess(Handler<CompositeFuture> handler) {
+    return (CompositeFuture)super.onSuccess(handler);
+  }
+
+  @Override
+  public CompositeFuture onFailure(Handler<Throwable> handler) {
+    return (CompositeFuture)super.onFailure(handler);
   }
 }
